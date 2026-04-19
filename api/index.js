@@ -2,17 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const Product = require('./models/Product');
-const Order = require('./models/Order');
+const Product = require('../models/Product');
+const Order = require('../models/Order');
 
-const path = require('path');
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-
-// Serve static files from the root directory
-app.use(express.static(__dirname));
 
 // Serverless MongoDB Connection Manager
 let cachedDb = null;
