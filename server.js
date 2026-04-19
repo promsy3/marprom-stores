@@ -10,21 +10,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-if (process.env.MONGO_URI) {
-  mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('Could not connect to MongoDB', err));
-} else {
-  console.warn('WARNING: MONGO_URI is not defined in .env! Backend is running without database connection.');
+// Serverless MongoDB Connection Manager
+let cachedDb = null;
+
+async function connectToDatabase() {
+    if (cachedDb) {
+        return cachedDb;
+    }
+    if (!process.env.MONGO_URI) {
+        throw new Error('MONGO_URI is missing');
+    }
+    const db = await mongoose.connect(process.env.MONGO_URI);
+    cachedDb = db;
+    return db;
 }
 
 // GET route for products
 app.get('/api/products', async (req, res) => {
     try {
-        if (!process.env.MONGO_URI) {
-            return res.status(503).json({ error: "Database not connected. Please set MONGO_URI in .env" });
-        }
+        await connectToDatabase();
         const products = await Product.find({});
         res.json(products);
     } catch (err) {
@@ -35,9 +39,7 @@ app.get('/api/products', async (req, res) => {
 // POST route for orders
 app.post('/api/orders', async (req, res) => {
     try {
-        if (!process.env.MONGO_URI) {
-            return res.status(503).json({ error: "Database not connected" });
-        }
+        await connectToDatabase();
         const { items, totalAmount } = req.body;
         
         const newOrder = new Order({
