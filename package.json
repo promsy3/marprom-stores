@@ -1,0 +1,21 @@
+{
+  "name": "marprom-stores",
+  "version": "1.0.0",
+  "description": "Premium Organic Apparel & Accessories Store",
+  "main": "index.html",
+  "scripts": {
+    "seed": "node seedDb.js",
+    "dev": "vercel dev",
+    "start": "npx serve .",
+    "api-test": "node -e \"console.log('API functions are in ./api')\""
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.4.1"
+  },
+  "devDependencies": {
+    "vercel": "^34.2.0"
+  }
+}
